@@ -1,15 +1,17 @@
-'use client'
+"use client";
 
-import { auth, db } from '@/app/firebase'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/router'
-import { useState } from 'react'
-import Button from '@mui/material/Button'
+import LoginIcon from "@mui/icons-material/Login";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Stack } from "@mui/material";
+import { AlertColor } from "@mui/material/Alert";
+import TextField from "@mui/material/TextField";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-import Box from '@mui/material/Box'
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
-import TextField from '@mui/material/TextField';
-import { Stack } from '@mui/material';
+import CustomSnackbar, { SnackbarControllerProps } from "@/components/Snackbar";
+import { useUsersStore } from "@/lib/usersStore";
 
 type Inputs = {
     email: string
@@ -17,43 +19,53 @@ type Inputs = {
 }
 
 export default function Login() {
-    // const [email, setEmail] = useState('');
-    // const [pwd, setPwd] = useState('');
+    const router = useRouter();
+    const { users, setCurrentUser, currentUser } = useUsersStore();
 
-    const {
-        control,
-        handleSubmit,
-    } = useForm<Inputs>({})
+    // snackbar
+    const [snackbarController, setSnackbarController] = useState<SnackbarControllerProps>(
+        { severity: "info", message: "", open: false }
+    );
+
+    // login button
+    const [loading, setLoading] = useState(false);
+
+    // form
+    const { control, handleSubmit } = useForm<Inputs>({});
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        doLogin(data)
-        console.log(`email: ${data.email}`)
-    }
+        doLogin(data);
+        console.log(`email: ${data.email}`);
+    };
 
     const doLogin = (data: Inputs) => {
-        // * authを定義したものを使うと、firebase.tsを参照するものがないからロードが発生しなかった
-        // * firebase.tsからimportしたauthをそのまま使えば認証も通った
-        // const auth = getAuth();
+        const auth = getAuth();
+        setLoading(true);
 
         signInWithEmailAndPassword(auth, data.email, data.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log("login success.")
+                // * for check behavior
+                // const x = users.find((u) => u.id === user.uid);
+                // console.log(x);
+                // setCurrentUser(x);
+                setCurrentUser(users.find((u) => u.id === user.uid));
                 console.log(user);
+                router.push("/");
+                setSnackbarController({ severity: "success", message: "ログインに成功しました", open: true });
             })
-            .catch((error) => {
-                console.log("error occured.")
-                console.log(error);
-            })
-    }
+            .catch((e) => {
+                setSnackbarController({ severity: "error", message: "ログインに失敗しました", open: true });
+            });
+        setLoading(false);
+    };
 
     return (
-        <div className='m-10'>
-            <h1>Login Page</h1>
+        <div className="m-10 w-full">
 
-            <Stack component="form" onSubmit={handleSubmit(onSubmit)} className='flex flex-col'>
-                {/* register your input into the hook by invoking the "register" function */}
-                <Controller name='email' control={control} defaultValue={""} rules={{
+            <Stack component="form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col mx-auto" sx={{ maxWidth: 500 }}>
+                <h1 className="mx-auto">ログイン</h1>
+                <Controller name="email" control={control} defaultValue={""} rules={{
                     required: { value: true, message: "Email is required" }, pattern: {
                         value: /\S+@\S+\.\S+/,
                         message: "Entered value does not match email format"
@@ -65,12 +77,12 @@ export default function Login() {
                         // id=""
                         label="Email"
                         variant="outlined"
-                        className='my-3'
+                        className="mb-3"
                         error={!!fieldState.error}
                         helperText={fieldState.error?.message} />
                 )}
                 />
-                <Controller name='password' control={control} defaultValue={""} rules={{
+                <Controller name="password" control={control} defaultValue={""} rules={{
                     required: { value: true, message: "Password is required" }
                 }} render={({ field, fieldState }) => (
                     <TextField
@@ -78,16 +90,28 @@ export default function Login() {
                         // id=""
                         label="Password"
                         variant="outlined"
-                        className='my-3'
-                        type='password'
+                        className="mb-3"
+                        type="password"
                         error={!!fieldState.error}
                         helperText={fieldState.error?.message} />
                 )}
                 />
-                {/* {errors.password && <span>This field is required</span>} */}
 
-                <Button variant='contained' type="submit" className='px-10 py-3 w-fit'>Login</Button>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    variant="contained"
+                    endIcon={<LoginIcon />}
+                    loadingPosition="end"
+                    className="px-10 py-3">
+                    ログイン
+                </LoadingButton>
             </Stack>
+            <CustomSnackbar
+                {...snackbarController}
+                open={snackbarController.open}
+                onClose={() => setSnackbarController({ ...snackbarController, open: false })}
+            />
         </div>
-    )
+    );
 }

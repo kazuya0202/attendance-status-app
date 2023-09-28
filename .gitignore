@@ -7,6 +7,7 @@ firebase.json
 .firebaserc
 firestore.indexes.json
 firestore.rules
+.firebase/*
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
