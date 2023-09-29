@@ -44,13 +44,16 @@ export default function Header() {
             return (
                 <>
                     <IconButton
+                        color="inherit"
                         onClick={handleClick}
                         aria-controls={open ? "menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
+                        className="rounded-md"
                     >
                         {/* <Avatar>{currentUser?.name[0]}</Avatar> */}
-                        <AccountCircleIcon fontSize="large" className="text-white" />
+                        <AccountCircleIcon fontSize="large" />
+                        <Typography variant="h6" component="div" className="ml-2">設定</Typography>
                     </IconButton>
                     <Menu
                         anchorEl={anchorEl}

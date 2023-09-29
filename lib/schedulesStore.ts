@@ -7,7 +7,7 @@ type SchedulesStore = {
     updateSchedules: (schedules: ScheduleState[]) => void;
 }
 
-export const useUsersStore = create<SchedulesStore>((set) => ({
+export const useSchedulesStore = create<SchedulesStore>((set) => ({
     schedules: [],
     updateSchedules: (schedules: ScheduleState[]) => set(() => ({ schedules: schedules })),
 }));

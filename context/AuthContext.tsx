@@ -13,6 +13,8 @@ import {
 } from "react";
 
 import { db, initializeFirebaseApp, UserState } from "@/app/firebase";
+import { ScheduleState } from "@/lib/entity";
+import { useSchedulesStore } from "@/lib/schedulesStore";
 import { useUsersStore } from "@/lib/usersStore";
 
 export type AuthState = {
@@ -29,18 +31,33 @@ export const AuthProvider = ({ children }: Props) => {
     const router = useRouter();
     const [user, setUser] = useState<AuthState>(initialState);
     const { users, updateUsers } = useUsersStore();
+    const { updateSchedules } = useSchedulesStore();
 
     useEffect(() => {
         initializeFirebaseApp();
         // store
-        const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+        onSnapshot(collection(db, "users"), (snapshot) => {
             updateUsers(
                 snapshot.docs.map((doc) => (
                     { name: doc.data().name, id: doc.id } as UserState
                 )));
             console.log(snapshot.docs);
         });
-        // return unsub;
+        onSnapshot(collection(db, "schedules"), (snapshot) => {
+            updateSchedules(
+                snapshot.docs.map((doc) => (
+                    {
+                        userId: doc.data().userId,
+                        title: doc.data().title,
+                        date: doc.data().date,
+                        type_: doc.data().type,
+                        createdAt: doc.data().createdAt,
+                        updatedAt: doc.data().updatedAt,
+                        id: doc.id
+                    } as ScheduleState
+                ))
+            );
+        });
 
         try {
             const auth = getAuth();
@@ -53,7 +70,7 @@ export const AuthProvider = ({ children }: Props) => {
             setUser(initialState);
             throw error;
         }
-    }, [updateUsers]);
+    }, [updateUsers, updateSchedules]);
 
     return (
         <AuthContext.Provider value={user}>
