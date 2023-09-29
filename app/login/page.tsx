@@ -3,15 +3,14 @@
 import LoginIcon from "@mui/icons-material/Login";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Stack } from "@mui/material";
-import { AlertColor } from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-import CustomSnackbar, { SnackbarControllerProps } from "@/components/Snackbar";
-import { useUsersStore } from "@/lib/usersStore";
+import CustomSnackbar, { type SnackbarControllerProps } from "@/components/Snackbar";
+import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 type Inputs = {
     email: string
@@ -20,7 +19,7 @@ type Inputs = {
 
 export default function Login() {
     const router = useRouter();
-    const { users, setCurrentUser, currentUser } = useUsersStore();
+    const { users, setCurrentUser, currentUser } = useDataBaseStore();
 
     // snackbar
     const [snackbarController, setSnackbarController] = useState<SnackbarControllerProps>(

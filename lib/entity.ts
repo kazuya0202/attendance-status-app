@@ -10,10 +10,15 @@ type WithSnapshotId<T> = T & {
 }
 
 // plan, event
-export type ScheduleState = WithTimestamp<{
-    id: string;
+export type ScheduleState = WithSnapshotId<WithTimestamp<{
     userId: string;
     title: string;
     date: Timestamp;
     type_: "plan" | "event";
-}>;
+}>>
+
+
+export type UserState = {
+    id: string;
+    name: string;
+}

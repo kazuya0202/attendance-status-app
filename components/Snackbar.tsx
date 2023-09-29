@@ -1,7 +1,5 @@
 import MuiAlert, { AlertColor, AlertProps } from "@mui/material/Alert";
-import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
-import Stack from "@mui/material/Stack";
 import React from "react";
 
 export type SnackbarControllerProps = {
@@ -24,8 +22,6 @@ type Props = {
     onClose: () => void;
 }
 
-
-// export default function CustomizedSnackbars(props) {
 const CustomSnackbar = ({ severity, message, open, onClose }: Props) => {
     return (
         <Snackbar open={open} autoHideDuration={3000} onClose={onClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>

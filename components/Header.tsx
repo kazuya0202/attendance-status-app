@@ -2,7 +2,6 @@
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { AlertColor } from "@mui/material/Alert";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -15,8 +14,7 @@ import Typography from "@mui/material/Typography";
 import { FirebaseError } from "firebase/app";
 import { getAuth, signOut, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import * as React from "react";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import CustomSnackbar, { SnackbarControllerProps } from "@/components/Snackbar";
 import { useAuthContext } from "@/context/AuthContext";

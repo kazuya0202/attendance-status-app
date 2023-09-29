@@ -6,21 +6,15 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { blue } from "@mui/material/colors";
 import Typography from "@mui/material/Typography";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { redirect } from "next/navigation";
 
 import { useAuthContext } from "@/context/AuthContext";
-import { useUsersStore } from "@/lib/usersStore";
-
-type UserState = {
-    id: string;
-    name: string;
-}
-
+import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 export default function MyPage() {
     const { user } = useAuthContext();
-    const { users, currentUser, setCurrentUser } = useUsersStore();
+    const { users, currentUser } = useDataBaseStore();
 
     if (user === undefined) {
         return <Box>loding...</Box>;
@@ -29,10 +23,6 @@ export default function MyPage() {
     }
 
     const getUserCard = () => {
-        if (currentUser === undefined) {
-            setCurrentUser(users.find((u) => u.id === user.uid));
-        }
-
         return (
             <>
                 <Card sx={{ minWidth: 275 }} className="bg-slate-100 ">
@@ -60,7 +50,4 @@ export default function MyPage() {
             {getUserCard()}
         </>
     );
-
-
-
 }

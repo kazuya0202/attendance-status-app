@@ -12,10 +12,10 @@ import AddScheduleDialogComponent from "@/components/AddScheduleDialogComponent"
 import DataCalendarComponent from "@/components/MonthCalendar";
 import ScheduleList from "@/components/ScheduleList";
 import { useAuthContext } from "@/context/AuthContext";
-import { useUsersStore } from "@/lib/usersStore";
+import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 export default function Home() {
-    const { users, currentUser } = useUsersStore();
+    const { users, currentUser } = useDataBaseStore();
     const { user } = useAuthContext();
 
     if (user === undefined) {

@@ -1,7 +1,6 @@
 "use client";
 
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -14,18 +13,9 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "",
 };
 
-const initializeFirebaseApp = () => {
-  console.log("firebase initialized");
-  return !getApps().length ? initializeApp(firebaseConfig) : getApp();
-};
+const initializeFirebaseApp = () => !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const firebaseApp = initializeFirebaseApp();
-const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-export { auth, db, firebaseApp, initializeFirebaseApp };
-
-export type UserState = {
-  id: string;
-  name: string;
-}
+export { db, firebaseApp, initializeFirebaseApp };

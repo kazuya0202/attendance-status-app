@@ -1,13 +1,10 @@
 import Stack from "@mui/material/Stack";
 
-import { ScheduleState } from "@/lib/entity";
-import { useSchedulesStore } from "@/lib/schedulesStore";
-import { useUsersStore } from "@/lib/usersStore";
-
+import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 export default function ScheduleList() {
-    const { schedules } = useSchedulesStore();
-    const { users } = useUsersStore();
+    const { users, schedules } = useDataBaseStore();
+
 
     const getUsername = (userId: string) => {
         return users.find((u) => u.id === userId)?.name;
