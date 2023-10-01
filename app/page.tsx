@@ -1,15 +1,12 @@
 "use client";
+
 import { Divider } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
 import { redirect } from "next/navigation";
 
-import { db } from "@/app/firebase";
-import AddScheduleDialogComponent from "@/components/AddScheduleDialogComponent";
+import AddScheduleComponent from "@/components/AddScheduleComponent";
 import DataCalendarComponent from "@/components/MonthCalendar";
+import PageLoading from "@/components/PageLoading";
 import ScheduleList from "@/components/ScheduleList";
 import { useAuthContext } from "@/context/AuthContext";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
@@ -19,39 +16,22 @@ export default function Home() {
     const { user } = useAuthContext();
 
     if (user === undefined) {
-        return <Box>loding...</Box>;
+        return <PageLoading />;
     } else if (user === null) {
         redirect("/login");
     }
 
-
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#ffffe1",
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: "center",
-        color: theme.palette.text.secondary,
-    }));
-
-
     return (
         <>
             <Grid container spacing={2}>
-                <Grid item xs={"auto"}>
-                    {/* <Item>xs=auto</Item> */}
+                <Grid item xs={"auto"} className="hidden md:block">
                     <DataCalendarComponent />
                 </Grid>
-                <Grid item style={{ alignSelf: "stretch" }}>
+                <Grid item style={{ alignSelf: "stretch" }} className="hidden md:block">
                     <Divider orientation="vertical" />
                 </Grid>
-                <Grid item xs>
-                    {/* <Item>xs</Item> */}
-                    {/* <ul>
-                        {users.map((user) => (
-                            <li key={user.id}>{user.name}</li>
-                        ))}
-                    </ul> */}
-                    <AddScheduleDialogComponent />
+                <Grid item xs className="">
+                    <AddScheduleComponent />
                     <ScheduleList />
                 </Grid>
             </Grid >

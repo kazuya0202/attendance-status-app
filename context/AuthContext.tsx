@@ -10,7 +10,7 @@ import {
     useState,
 } from "react";
 
-import { initializeFirebaseApp } from "@/app/firebase";
+import { initializeFirebaseApp } from "@/lib/firebase";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 export type AuthState = {

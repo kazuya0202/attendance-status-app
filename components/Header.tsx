@@ -2,6 +2,7 @@
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -50,8 +51,8 @@ export default function Header() {
                         className="rounded-md"
                     >
                         {/* <Avatar>{currentUser?.name[0]}</Avatar> */}
-                        <AccountCircleIcon fontSize="large" />
-                        <Typography variant="h6" component="div" className="ml-2">設定</Typography>
+                        <MenuIcon fontSize="large" />
+                        <Typography variant="h6" component="div" className="hidden md:ml-2 md:block">メニュー</Typography>
                     </IconButton>
                     <Menu
                         anchorEl={anchorEl}
@@ -90,7 +91,7 @@ export default function Header() {
             router.push("/login");
         } catch (e) {
             if (e instanceof FirebaseError) {
-                console.log(e);
+                console.error(e);
             }
         }
     };

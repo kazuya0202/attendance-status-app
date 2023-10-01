@@ -14,11 +14,10 @@ export type ScheduleState = WithSnapshotId<WithTimestamp<{
     userId: string;
     title: string;
     date: Timestamp;
-    type_: "plan" | "event";
+    category: "plan" | "event";
 }>>
 
 
-export type UserState = {
-    id: string;
+export type UserState = WithSnapshotId<{
     name: string;
-}
+}>

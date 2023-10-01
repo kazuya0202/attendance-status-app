@@ -2,7 +2,7 @@
 
 import LoginIcon from "@mui/icons-material/Login";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ export default function Login() {
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         doLogin(data);
-        console.log(`email: ${data.email}`);
+        // console.log(`email: ${data.email}`);
     };
 
     const doLogin = (data: Inputs) => {
@@ -49,7 +49,7 @@ export default function Login() {
                 // console.log(x);
                 // setCurrentUser(x);
                 setCurrentUser(users.find((u) => u.id === user.uid));
-                console.log(user);
+                // console.log(user);
                 router.push("/");
                 setSnackbarController({ severity: "success", message: "ログインに成功しました", open: true });
             })
@@ -60,57 +60,59 @@ export default function Login() {
     };
 
     return (
-        <div className="m-10 w-full">
-
-            <Stack component="form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col mx-auto" sx={{ maxWidth: 500 }}>
-                <h1 className="mx-auto">ログイン</h1>
-                <Controller name="email" control={control} defaultValue={""} rules={{
-                    required: { value: true, message: "Email is required" }, pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: "Entered value does not match email format"
+        <div className="m-10">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Stack className="mx-auto w-full sm:w-2/3 md:w-1/2 max-w-md">
+                    <Box component="h1" className="mx-auto">ログイン</Box>
+                    <Controller name="email" control={control} defaultValue={""} rules={{
+                        required: { value: true, message: "Email is required" }, pattern: {
+                            value: /\S+@\S+\.\S+/,
+                            message: "Entered value does not match email format"
+                        }
                     }
-                }
-                } render={({ field, fieldState }) => (
-                    <TextField
-                        {...field}
-                        // id=""
-                        label="Email"
-                        variant="outlined"
-                        className="mb-3"
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message} />
-                )}
-                />
-                <Controller name="password" control={control} defaultValue={""} rules={{
-                    required: { value: true, message: "Password is required" }
-                }} render={({ field, fieldState }) => (
-                    <TextField
-                        {...field}
-                        // id=""
-                        label="Password"
-                        variant="outlined"
-                        className="mb-3"
-                        type="password"
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message} />
-                )}
-                />
+                    } render={({ field, fieldState }) => (
+                        <TextField
+                            {...field}
+                            // id=""
+                            label="Email"
+                            variant="outlined"
+                            className="mb-3"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message} />
+                    )}
+                    />
+                    <Controller name="password" control={control} defaultValue={""} rules={{
+                        required: { value: true, message: "Password is required" }
+                    }} render={({ field, fieldState }) => (
+                        <TextField
+                            {...field}
+                            // id=""
+                            label="Password"
+                            variant="outlined"
+                            className="mb-3"
+                            type="password"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message} />
+                    )}
+                    />
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    variant="contained"
-                    endIcon={<LoginIcon />}
-                    loadingPosition="end"
-                    className="px-10 py-3">
-                    ログイン
-                </LoadingButton>
-            </Stack>
-            <CustomSnackbar
-                {...snackbarController}
-                open={snackbarController.open}
-                onClose={() => setSnackbarController({ ...snackbarController, open: false })}
-            />
+                    <LoadingButton
+                        type="submit"
+                        loading={loading}
+                        variant="contained"
+                        endIcon={<LoginIcon />}
+                        loadingPosition="end"
+                        size="large"
+                        className="px-10 py-3">
+                        ログイン
+                    </LoadingButton>
+                </Stack>
+                <CustomSnackbar
+                    {...snackbarController}
+                    open={snackbarController.open}
+                    onClose={() => setSnackbarController({ ...snackbarController, open: false })}
+                />
+            </form>
         </div>
     );
 }

@@ -1,83 +1,130 @@
+import { Grid } from "@mui/material";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { blue } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
+import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+
+import { ScheduleState } from "@/lib/entity";
+import { addSchedule } from "@/lib/firebase";
+import { useDataBaseStore } from "@/store/DataBaseProvider";
+
+import DateProvider from "./DateProvider";
 
 
-type Props = {
-    open: boolean;
-    handleClose: () => void;
-    defaultDate?: Dayjs;
-}
-
-enum AddTypes {
+enum Categories {
     plan = "plan",
     event = "event"
 }
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+type PlanInputs = {
+    date: Dayjs;
+}
 
-export default function AddScheduleDialog({ open, handleClose, defaultDate = dayjs().tz("Asia/Tokyo") }: Props) {
-    const [currentType, setCurrentType] = useState(AddTypes.plan);
+type Props = {
+    open: boolean;
+    handleClose: () => void;
+}
 
-    const CustomToggleButton = styled(ToggleButton)(({ }) => ({
-        "&.Mui-selected, &.Mui-selected:hover": {
-            color: "black",
-            backgroundColor: blue[200],
+const CustomToggleButton = styled(ToggleButton)(({ }) => ({
+    "&.Mui-selected, &.Mui-selected:hover": {
+        color: "white",
+        backgroundColor: grey[800],
+    },
+}));
+
+export default function AddScheduleDialog({ open, handleClose }: Props) {
+    const [currentCategory, setCurrentCategory] = useState(Categories.plan);
+    const { currentUser } = useDataBaseStore();
+
+    const { control: controlPlan, handleSubmit: handleSubmitPlan } = useForm<PlanInputs>({
+        defaultValues: {
+            date: dayjs(),
+        },
+    });
+
+    const onSubmit: SubmitHandler<PlanInputs> = async (data) => {
+        const dateWithoutTime = data.date.toDate();
+        if (!dateWithoutTime) {
+            return;
         }
-    }));
+
+        dateWithoutTime.setHours(0, 0, 0, 0);
+        const newSchedule = {
+            title: "登校",
+            date: Timestamp.fromDate(dateWithoutTime),
+            category: currentCategory,
+            userId: currentUser?.id,
+        } as ScheduleState;
+        addSchedule(newSchedule);
+        handleClose();
+        // todo: snackbar
+    };
 
     return (
         <>
             {open && (
                 <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
                     <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
-                        <DialogContent className="mt-5 mb-5">
-                            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                                <ToggleButtonGroup
-                                    className="bg-slate-100"
-                                    value={currentType}
-                                    exclusive
-                                    fullWidth
-                                    onChange={(event, newType) => {
-                                        if (newType != null) {
-                                            setCurrentType(newType);
-                                        }
-                                    }}
-                                >
-                                    <CustomToggleButton key={AddTypes.plan} value={AddTypes.plan}>登校予定</CustomToggleButton>
-                                    <CustomToggleButton key={AddTypes.event} value={AddTypes.event}>イベント</CustomToggleButton>
-                                </ToggleButtonGroup>
-                            </Box>
-                            <Box sx={{ m: "auto", mt: 5 }}>
-                                {currentType === AddTypes.plan && (
-                                    <Stack direction="row" spacing={3}>
-                                        <DatePicker label="日付" defaultValue={defaultDate} />
-                                        <Button variant="contained" className="rounded-full">登校する</Button>
-                                        {/* <DialogActions className="mr-3 mb-3">
-                                            <Button variant="outlined" onClick={handleClose}>キャンセル</Button>
-                                            <Button variant="contained" onClick={handleClose}>追加</Button>
-                                        </DialogActions> */}
-                                    </Stack>
-                                )}
-                                {currentType === AddTypes.event && (
-                                    <Stack>
-                                        Item Two
-                                    </Stack>
-                                )}
-                            </Box>
+                        <DialogContent className="my-4 mx-4">
+                            <ToggleButtonGroup
+                                className="bg-slate-100 rounded-full "
+                                value={currentCategory}
+                                exclusive
+                                fullWidth
+                                onChange={(event, newType) => {
+                                    if (newType != null) {
+                                        setCurrentCategory(newType);
+                                    }
+                                }}
+                            >
+                                <CustomToggleButton key={Categories.plan} value={Categories.plan} className="text-lg rounded-l-full">
+                                    登校予定
+                                </CustomToggleButton>
+                                <CustomToggleButton key={Categories.event} value={Categories.event} className="text-lg rounded-r-full">
+                                    イベント
+                                </CustomToggleButton>
+                            </ToggleButtonGroup>
+                            {currentCategory === Categories.plan && (
+                                <>
+                                    <form onSubmit={handleSubmitPlan(onSubmit)}>
+                                        <Grid container className="mt-8 mx-auto grid-flow-col md:grid-flow-row">
+                                            <Grid item xs="auto" md className="mx-auto w-full md:max-w-sm md:mx-0">
+                                                <DateProvider>
+                                                    <Controller name="date" control={controlPlan} rules={{ required: { value: true, message: "Date is required" } }}
+                                                        render={({ field, fieldState }) => (
+                                                            <DatePicker {...field}
+                                                                label="日付"
+                                                                defaultValue={dayjs()}
+                                                                minDate={dayjs()}
+                                                                value={field.value || ""}
+                                                                onChange={field.onChange}
+                                                                className="w-full" />
+                                                        )}
+                                                    />
+                                                </DateProvider>
+                                            </Grid>
+                                            <Grid item xs="auto" className="ml-auto mt-4 md:mt-0 md:ml-4">
+                                                <Button type="submit" variant="contained" className="rounded-full px-8 w-full p-4 md:ml-4 md:h-full">登校する</Button>
+                                            </Grid>
+                                        </Grid>
+                                    </form>
+                                </>
+                            )}
+                            {currentCategory === Categories.event && (
+                                <Grid container className="mt-8 mx-auto grid-flow-col md:grid-flow-row w-full">
+                                    <Alert severity="info" className="w-full">今後実装予定</Alert>
+                                </Grid>
+                            )}
                         </DialogContent>
                     </Dialog>
                 </Box >
