@@ -25,7 +25,7 @@ export default function DateCalendarComponent() {
         <>
             <DateProvider>
                 {/* view only */}
-                <DateCalendar readOnly value={dayjs()} />
+                <DateCalendar readOnly value={dayjs()} views={["day"]} />
 
                 {/* <DateCalendar
                     value={selectedDate}

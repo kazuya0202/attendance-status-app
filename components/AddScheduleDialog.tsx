@@ -42,6 +42,14 @@ const CustomToggleButton = styled(ToggleButton)(({ }) => ({
     },
 }));
 
+const styles = {
+    mobiledialogprops: {
+        ".MuiDatePickerToolbar-title": {
+            fontSize: "1.5rem",
+        },
+    },
+};
+
 export default function AddScheduleDialog({ open, handleClose }: Props) {
     const [currentCategory, setCurrentCategory] = useState(Categories.plan);
     const { currentUser } = useDataBaseStore();
@@ -108,6 +116,15 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
                                                                 minDate={dayjs()}
                                                                 value={field.value || ""}
                                                                 onChange={field.onChange}
+                                                                format="YYYY年M月D日"
+                                                                slotProps={{
+                                                                    toolbar: {
+                                                                        toolbarFormat: "YYYY年M月D日",
+                                                                    },
+                                                                    dialog: {
+                                                                        sx: styles.mobiledialogprops,
+                                                                    },
+                                                                }}
                                                                 className="w-full" />
                                                         )}
                                                     />
