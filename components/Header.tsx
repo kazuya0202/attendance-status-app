@@ -6,7 +6,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -42,18 +41,18 @@ export default function Header() {
         if (user) {
             return (
                 <>
-                    <IconButton
+                    <Button
                         color="inherit"
                         onClick={handleClick}
                         aria-controls={open ? "menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
                         className="rounded-md"
+                        startIcon={<MenuIcon fontSize="medium" />}
                     >
                         {/* <Avatar>{currentUser?.name[0]}</Avatar> */}
-                        <MenuIcon fontSize="large" />
-                        <Typography variant="h6" component="div" className="hidden md:ml-2 md:block">メニュー</Typography>
-                    </IconButton>
+                        <Typography variant="body1" component="div" className="hidden md:ml-2 md:block">メニュー</Typography>
+                    </Button>
                     <Menu
                         anchorEl={anchorEl}
                         id="menu"

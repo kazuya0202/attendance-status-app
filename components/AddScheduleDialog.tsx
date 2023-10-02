@@ -95,10 +95,10 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
                                     }
                                 }}
                             >
-                                <CustomToggleButton key={Categories.plan} value={Categories.plan} className="text-lg rounded-l-full">
+                                <CustomToggleButton key={Categories.plan} value={Categories.plan} className="sm:text-lg rounded-l-full">
                                     登校予定
                                 </CustomToggleButton>
-                                <CustomToggleButton key={Categories.event} value={Categories.event} className="text-lg rounded-r-full">
+                                <CustomToggleButton key={Categories.event} value={Categories.event} className="sm:text-lg rounded-r-full">
                                     イベント
                                 </CustomToggleButton>
                             </ToggleButtonGroup>
@@ -117,6 +117,7 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
                                                                 value={field.value || ""}
                                                                 onChange={field.onChange}
                                                                 format="YYYY年M月D日"
+                                                                views={["day"]}
                                                                 slotProps={{
                                                                     toolbar: {
                                                                         toolbarFormat: "YYYY年M月D日",

@@ -60,9 +60,9 @@ export default function Login() {
     };
 
     return (
-        <div className="mx-4 my-4">
+        <div className="mt-10 w-full bg-white mx-auto max-w-sm sm:p-8 sm:max-w-md md:rounded-md md:max-w-md">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Stack className="w-full md:w-1/2 max-w-md mx-auto">
+                <Stack className="mx-4 pb-10 sm:mx-auto sm:p-8 sm:pb-20">
                     <Box component="h1" className="mx-auto">ログイン</Box>
                     <Controller name="email" control={control} defaultValue={""} rules={{
                         required: { value: true, message: "Email is required" }, pattern: {

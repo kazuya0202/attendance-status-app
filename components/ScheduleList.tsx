@@ -40,7 +40,7 @@ export default function ScheduleList() {
 
     return (
         <>
-            <Box sx={{ mt: 4 }} >
+            <Box sx={{ my: 4 }} >
                 <Stack direction="row" className="mb-2 ml-2">
                     <EventIcon className="my-auto" />
                     <Typography variant="h6" className="ml-2 my-auto">
@@ -104,13 +104,13 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
 
     return (
         <>
-            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
-                <Stack direction="column" className="bg-slate-100 rounded-lg py-3 px-5 shadow-sm shadow-gray-300 group">
+            <Grid item xs={12} sm={6} lg={4} xl={3}>
+                <Stack direction="column" className="bg-white rounded-lg py-3 px-5 shadow shadow-gray-300 group hover:shadow-md transition">
                     {plans.length > 0 && (
                         <Stack direction="row" className="flex justify-around">
                             <Chip
-                                className="w-fit text-base p-1 relative -top-3 -left-5 py-4
-                                    rounded-tl-lg rounded-br-lg rounded-tr-none rounded-bl-none bg-gray-500 text-slate-100"
+                                className="w-fit text-base px-1 relative -top-3 -left-0 py-4
+                                    rounded-tl-none rounded-br-md rounded-tr-none rounded-bl-md bg-gray-500 text-white"
                                 label={formatDateSimply(dayjs(date))}
                                 size="small"
                             />
@@ -124,7 +124,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                                 <Avatar
                                     className={clsx(
                                         isMine(plan) && "bg-green-600" || "bg-slate-700",
-                                        "border-solid border-2 border-slate-100")}
+                                        "border-solid border-2 border-white")}
                                 >
                                     {getUsername(plan.userId)?.charAt(0).toUpperCase()}
                                 </Avatar>

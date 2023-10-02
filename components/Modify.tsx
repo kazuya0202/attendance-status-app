@@ -1,4 +1,4 @@
-import BorderColorIcon from "@mui/icons-material/BorderColor";
+import EditIcon from "@mui/icons-material/Edit";
 import { IconButton, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import Popover from "@mui/material/Popover";
@@ -62,9 +62,10 @@ export default function BasicPopover({ date, hasOwn, onButtonClick }: Props) {
                 aria-describedby={id}
                 color="inherit"
                 onClick={handleClick}
-                className="rounded-full mt-0 ml-auto w-fit h-auto text-gray-500 opacity-70 md:opacity-0 group-hover:opacity-70"
+                className="rounded-full mt-0 ml-auto w-fit h-auto text-gray-500 opacity-50 md:opacity-0 group-hover:opacity-50 transition"
                 size="small">
-                <BorderColorIcon />
+                {/* <BorderColorIcon /> */}
+                <EditIcon />
             </IconButton>
 
             <Popover

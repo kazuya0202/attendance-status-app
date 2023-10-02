@@ -1,6 +1,6 @@
 "use client";
 
-import { Divider } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { redirect } from "next/navigation";
 
@@ -23,18 +23,20 @@ export default function Home() {
 
     return (
         <>
-            <Grid container spacing={1}>
-                <Grid item xs={"auto"} className="hidden md:block">
-                    <DataCalendarComponent />
-                </Grid>
-                <Grid item style={{ alignSelf: "stretch" }} className="hidden md:block">
-                    <Divider orientation="vertical" />
-                </Grid>
-                <Grid item xs className="md:mx-3">
-                    <AddScheduleComponent />
-                    <ScheduleList />
-                </Grid>
-            </Grid >
+            <Box className="mx-5 sm:my-5">
+                <Grid container spacing={1}>
+                    <Grid item xs={"auto"} className="hidden md:block">
+                        <DataCalendarComponent />
+                    </Grid>
+                    <Grid item style={{ alignSelf: "stretch" }} className="hidden md:block">
+                        <Divider orientation="vertical" />
+                    </Grid>
+                    <Grid item xs className="sm:mx-3">
+                        <AddScheduleComponent />
+                        <ScheduleList />
+                    </Grid>
+                </Grid >
+            </Box>
         </>
     );
 }

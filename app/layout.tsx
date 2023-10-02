@@ -26,11 +26,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-slate-100`}>
         <DataBaseProvider>
           <AuthProvider>
             <Header />
-            <Box id="container" className="m-5">
+            <Box id="container" className="">
               {children}
             </Box>
           </AuthProvider>
