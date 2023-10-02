@@ -15,7 +15,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Attendance Status App",
   description: "Attendance Status App by Next.js",
-  icons: [{ rel: "icon", url: Favicon.src }]
+  icons: [{ rel: "icon", url: Favicon.src }],
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
