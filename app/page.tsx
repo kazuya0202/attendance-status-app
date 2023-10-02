@@ -23,14 +23,14 @@ export default function Home() {
 
     return (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
                 <Grid item xs={"auto"} className="hidden md:block">
                     <DataCalendarComponent />
                 </Grid>
                 <Grid item style={{ alignSelf: "stretch" }} className="hidden md:block">
                     <Divider orientation="vertical" />
                 </Grid>
-                <Grid item xs className="">
+                <Grid item xs className="md:mx-3">
                     <AddScheduleComponent />
                     <ScheduleList />
                 </Grid>
