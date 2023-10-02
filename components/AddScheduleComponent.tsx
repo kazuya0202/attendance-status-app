@@ -1,8 +1,10 @@
-import Button from "@mui/material/Button";
+import { Box, IconButton, Typography } from "@mui/material";
 import React, { useState } from "react";
 
 import AddScheduleDialog from "@/components/AddScheduleDialog";
 import DateProvider from "@/components/DateProvider";
+
+import AddScheduleButton from "./BottomNavigation";
 
 
 export default function AddScheduleComponent() {
@@ -10,13 +12,13 @@ export default function AddScheduleComponent() {
 
     return (
         <>
-            <Button variant="contained" size="large" onClick={() => setOpen(true)} className="mt-4">
-                予定を追加する
-            </Button >
+            <Box className="md:mt-4">
+                <AddScheduleButton handleClick={() => setOpen(true)} />
 
-            <DateProvider>
-                <AddScheduleDialog open={open} handleClose={() => setOpen(false)} />
-            </DateProvider>
+                <DateProvider>
+                    <AddScheduleDialog open={open} handleClose={() => setOpen(false)} />
+                </DateProvider>
+            </Box >
         </>
     );
 }
