@@ -63,6 +63,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
 
     const [enabled, setEnabled] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
+    const [relativeDate, setRelativeDate] = useState<"today" | "tomorrow" | null>(null);
 
     const getUsername = (userId: string) => {
         return users.find((u) => u.id === userId)?.name;
@@ -81,6 +82,18 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
             setDate(d);
         }
     }, [setDocumentIdOfCurrentUser, plans, currentUser]);
+
+    useEffect(() => {
+        const diff = dayjs(date).diff(dayjs(), "day", true);
+        // console.log(diff);
+        if (-1 <= diff && diff < 0) {
+            setRelativeDate("today");
+        } else if (/* 0 <= diff && */ diff < 1) {
+            setRelativeDate("tomorrow");
+        } else {
+            setRelativeDate(null);
+        }
+    }, [date]);
 
     useEffect(() => {
         if (!enabled) {
@@ -108,12 +121,27 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                 <Stack direction="column" className="bg-white rounded-lg py-3 px-5 shadow shadow-gray-300 group hover:shadow-md transition">
                     {plans.length > 0 && (
                         <Stack direction="row" className="flex justify-around">
-                            <Chip
+                            {/* <Chip
                                 className="w-fit text-base px-1 relative -top-3 -left-0 py-4
                                     rounded-tl-none rounded-br-md rounded-tr-none rounded-bl-md bg-gray-500 text-white"
                                 label={formatDateSimply(dayjs(date))}
                                 size="small"
-                            />
+                            /> */}
+                            <Box className="w-fit px-2 relative -top-3 -left-0 flex items-center
+                                    rounded-tl-none rounded-br-md rounded-tr-none rounded-bl-md bg-gray-500 text-white"
+                            >
+                                <Typography variant="body1" sx={{ fontSize: 14 }} className="">
+                                    {formatDateSimply(dayjs(date))}
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontSize: 14 }} className="">
+                                    {relativeDate === "today" && (
+                                        <Chip component={"span"} size="small" label="今日" className="bg-slate-200 ml-3" />
+                                    ) || relativeDate === "tomorrow" && (
+                                        <Chip component={"span"} size="small" label="明日" className="bg-slate-200 ml-3" />
+                                    )
+                                    }
+                                </Typography>
+                            </Box>
 
                             <BasicPopover date={date} hasOwn={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
                         </Stack>
