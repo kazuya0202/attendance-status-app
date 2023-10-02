@@ -47,7 +47,7 @@ export default function ScheduleList() {
                         今後の予定
                     </Typography>
                 </Stack>
-                <Grid container spacing={2} className="w-full">
+                <Grid container spacing={2}>
                     {group.map((item, index) => (
                         <ScheduleItem key={index} plans={item.plans} events={item.events} />
                     ))}
