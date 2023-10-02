@@ -28,29 +28,31 @@ export default function MyPage() {
 
     return (
         <>
-            <Typography gutterBottom variant="h4">マイページ</Typography>
+            <Box className="p-5">
+                <Typography gutterBottom variant="h4">マイページ</Typography>
 
-            <Alert severity="info">
-                <AlertTitle>今後実装予定のメモ</AlertTitle>
-                <Typography>
-                    ・表示名の変更 <br />
-                    ・スケジュールの確認・編集（自分のみ） <br />
-                    ・etc... <br />
-                </Typography>
-            </Alert>
+                <Alert severity="info">
+                    <AlertTitle>今後実装予定のメモ</AlertTitle>
+                    <Typography>
+                        ・表示名の変更 <br />
+                        ・スケジュールの確認・編集（自分のみ） <br />
+                        ・etc... <br />
+                    </Typography>
+                </Alert>
 
-            <Card sx={{ minWidth: 275 }} className="bg-slate-100 my-3">
-                <CardContent>
-                    <Stack direction="row" className="">
-                        <Avatar sx={{ bgcolor: green[500] }} >
-                            {currentUser?.name.charAt(0).toUpperCase()}
-                        </Avatar>
-                        <Typography sx={{ fontSize: 18 }} className="ml-3">
-                            {currentUser?.name}
-                        </Typography>
-                    </Stack>
-                </CardContent>
-            </Card>
+                <Card sx={{ minWidth: 275 }} className="bg-slate-100 my-3">
+                    <CardContent>
+                        <Stack direction="row" className="">
+                            <Avatar sx={{ bgcolor: green[500] }} >
+                                {currentUser?.name.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <Typography sx={{ fontSize: 18 }} className="ml-3">
+                                {currentUser?.name}
+                            </Typography>
+                        </Stack>
+                    </CardContent>
+                </Card>
+            </Box>
         </>
     );
 }
