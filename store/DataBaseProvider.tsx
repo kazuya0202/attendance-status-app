@@ -1,12 +1,11 @@
 "use client";
 
-import dayjs, { Dayjs } from "dayjs";
 import { collection, onSnapshot, query, Timestamp, where } from "firebase/firestore";
 import { createContext, useContext, useEffect } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 
-import { type ScheduleState, type UserState } from "@/lib/entity";
-import { db, initializeFirebaseApp } from "@/lib/firebase";
+import { EventDocumentWithId, PlanDocumentWithId, ScheduleCategories, type UserState } from "@/lib/entity";
+import { collectionRef, db, initializeFirebaseApp } from "@/lib/firebase";
 
 
 type UsersStore<T> = T & {
@@ -18,42 +17,36 @@ type UsersStore<T> = T & {
 }
 
 type SchedulesStore<T> = T & {
-    schedules: ScheduleState[];
-    setSchedules: (schedules: ScheduleState[]) => void;
+    plans: PlanDocumentWithId[];
+    setPlans: (schedules: PlanDocumentWithId[]) => void;
+
+    events: EventDocumentWithId[];
+    setEvents: (events: EventDocumentWithId[]) => void;
 }
 
-type CalendarDateStore<T> = T & {
-    selectedDate: Dayjs | undefined;
-    setSelectedDate: (selectedDate: Dayjs) => void;
-}
-
-type DataBaseStore = UsersStore<SchedulesStore<CalendarDateStore<{}>>>
+type DataBaseStore = UsersStore<SchedulesStore<{}>>
 
 const createDataBaseStore = (): StoreApi<DataBaseStore> => {
     return createStore<DataBaseStore>((set) => ({
         users: [],
         setUsers: (users: UserState[]) => {
-            // console.log("[updateUsers] called.");
             set(() => ({ users: users }));
         },
 
         currentUser: undefined,
         setCurrentUser: (user: UserState | undefined) => {
-            // console.log("[setCurrentUser] called.");
             set(() => ({ currentUser: user }));
         },
 
-        schedules: [],
-        setSchedules: (schedules: ScheduleState[]) => {
-            // console.log("[updateSchedules] called.");
-            set(() => ({ schedules: schedules }));
+        plans: [],
+        setPlans: (plans: PlanDocumentWithId[]) => {
+            set(() => ({ plans: plans }));
         },
 
-        selectedDate: dayjs(),
-        setSelectedDate(selectedDate: Dayjs) {
-            // console.log("[setSelectedDate] called.");
-            set(() => ({ selectedDate: selectedDate }));
-        },
+        events: [],
+        setEvents: (events: EventDocumentWithId[]) => {
+            set(() => ({ events: events }));
+        }
     }));
 };
 
@@ -77,32 +70,52 @@ export const DataBaseProvider = ({ children }: Props) => {
                         id: doc.id
                     } as UserState
                 )));
-            // console.log(snapshot.docs);
         });
 
         const today = new Date();
-        today.setHours(0, 0, 0, 0);  // 登録時間が0時0分0秒のときにも対応するため
-        const q = query(collection(db, "schedules"), where("date", ">=", Timestamp.fromDate(today)));
-        const unSubscribeSchedules = onSnapshot(q, (snapshot) => {
-            state.setSchedules(
+        today.setHours(0, 0, 0, 0);
+        const queryPlans = query(
+            collectionRef[ScheduleCategories.PLAN],
+            where("date", ">=", Timestamp.fromDate(today))
+        );
+        const unSubscribePlans = onSnapshot(queryPlans, (snapshot) => {
+            state.setPlans(
                 snapshot.docs.map((doc) => (
                     {
-                        // ...structuredClone(doc.data()),
                         userId: doc.data().userId,
                         title: doc.data().title,
                         date: doc.data().date,
-                        category: doc.data().category,
                         createdAt: doc.data().createdAt,
                         updatedAt: doc.data().updatedAt,
                         id: doc.id
-                    } as ScheduleState
+                    } as PlanDocumentWithId
+                ))
+            );
+        });
+
+        const queryEvents = query(
+            collectionRef[ScheduleCategories.EVENT],
+            where("date", ">=", Timestamp.fromDate(today))
+        );
+        const unSubscribeEvents = onSnapshot(queryEvents, (snapshot) => {
+            state.setEvents(
+                snapshot.docs.map((doc) => (
+                    {
+                        userId: doc.data().userId,
+                        title: doc.data().title,
+                        date: doc.data().date,
+                        createdAt: doc.data().createdAt,
+                        updatedAt: doc.data().updatedAt,
+                        id: doc.id
+                    } as EventDocumentWithId
                 ))
             );
         });
 
         return () => {
             unSubscribeUsers();
-            unSubscribeSchedules();
+            unSubscribePlans();
+            unSubscribeEvents();
         };
     }, [store]);
 

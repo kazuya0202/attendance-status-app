@@ -5,7 +5,7 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { addDoc, collection, deleteDoc, doc, getFirestore, Timestamp, updateDoc } from "firebase/firestore";
 
 import { formatDate } from "@/lib/dayjsUtility/util";
-import { ScheduleState } from "@/lib/entity";
+import { EventDocumentConverter, EventDocumentWithId, PlanDocumentConverter, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -22,38 +22,42 @@ export const initializeFirebaseApp = () => !getApps().length ? initializeApp(fir
 export const firebaseApp = initializeFirebaseApp();
 export const db = getFirestore(firebaseApp);
 
-const schedulueCollectionRef = collection(db, "schedules");
-
-export const addSchedule = async (newSchedule: ScheduleState) => {
-  const runtimeTimestamp = Timestamp.fromDate(dayjs().toDate());
-  const docRef = await addDoc(schedulueCollectionRef, {
-    title: newSchedule.title,
-    date: newSchedule.date,
-    category: newSchedule.category,
-    createdAt: runtimeTimestamp,
-    updatedAt: runtimeTimestamp,
-    userId: newSchedule.userId,
-  } as ScheduleState);
-
-  console.log("[addSchedule]", docRef.id, formatDate(dayjs(newSchedule.date.toDate())));
+export const collectionRef = {
+  // ? converter設定してもTimestampで返ってくる
+  // [ScheduleCategories.PLAN]: collection(db, "plans").withConverter(PlanDocumentConverter),
+  // [ScheduleCategories.EVENT]: collection(db, "events").withConverter(EventDocumentConverter),
+  [ScheduleCategories.PLAN]: collection(db, "plans"),
+  [ScheduleCategories.EVENT]: collection(db, "events"),
 };
 
-export const updateSchedule = async (newSchedule: ScheduleState) => {
-  const runtimeTimestamp = Timestamp.fromDate(dayjs().toDate());
-  const docRef = await updateDoc(doc(schedulueCollectionRef, newSchedule.id), {
-    title: newSchedule.title,
-    date: newSchedule.date,
-    category: newSchedule.category,
-    createdAt: newSchedule.createdAt,
-    updatedAt: runtimeTimestamp,
-    userId: newSchedule.userId,
-  } as ScheduleState);
+export const addSchedule = async (
+  newSchedule: PlanDocumentWithId | EventDocumentWithId,
+  cat: ScheduleCategories
+) => {
+  // const runtimeTimestamp = Timestamp.now();
+  const docRef = await addDoc(
+    collectionRef[cat],
+    newSchedule
+  );
 
-  console.log("[updateSchedule]", newSchedule.id, formatDate(dayjs(newSchedule.date.toDate())));
+  console.log(`[addSchedule (${cat})]`, docRef.id, formatDate(dayjs(newSchedule.date.toDate())));
 };
 
-export const deleteSchedule = async (docId: string) => {
-  await deleteDoc(doc(schedulueCollectionRef, docId));
+export const updateSchedule = async (
+  newSchedule: PlanDocumentWithId | EventDocumentWithId,
+  cat: ScheduleCategories
+) => {
+  // const runtimeTimestamp = Timestamp.now();
+  const docRef = await updateDoc(
+    doc(collectionRef[cat], newSchedule.id),
+    newSchedule
+  );
 
-  console.log("[deleteSchedule]", docId);
+  console.log(`[updateSchedule (${cat})]`, newSchedule.id, formatDate(dayjs(newSchedule.date.toDate())));
+};
+
+export const deleteSchedule = async (docId: string, cat: ScheduleCategories) => {
+  await deleteDoc(doc(collectionRef[cat], docId));
+
+  console.log(`[deleteSchedule (${cat})]`, docId);
 };

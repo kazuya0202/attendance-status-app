@@ -9,7 +9,7 @@ import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 import { formatDateSimply } from "@/lib/dayjsUtility/util";
-import { ScheduleState } from "@/lib/entity";
+import { EventDocumentWithId, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
 import { addSchedule, deleteSchedule } from "@/lib/firebase";
 import * as libUtil from "@/lib/util";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
@@ -17,26 +17,67 @@ import { useDataBaseStore } from "@/store/DataBaseProvider";
 import BasicPopover from "./Modify";
 
 type ItemGroup = {
-    plans: ScheduleState[];
-    events: ScheduleState[];
+    plans: PlanDocumentWithId[];
+    events: EventDocumentWithId[];
 }
 
+interface plansSortByDate {
+    [key: string]: PlanDocumentWithId[];
+}
+interface eventsSortByDate {
+    [key: string]: PlanDocumentWithId[];
+}
 
 export default function ScheduleList() {
-    const { schedules } = useDataBaseStore();
+    const { plans, events } = useDataBaseStore();
     const [group, setGroup] = useState<ItemGroup[]>([]);
 
+    const cvtDateStringToNumber = (dateString: string): number => {
+        const parts = dateString.split("-");
+        const yyyy = parseInt(parts[0]);
+        const mm = parseInt(parts[1]);
+        const dd = parseInt(parts[2]);
+        return yyyy * 10000 + mm * 100 + dd;
+    };
+
     useEffect(() => {
-        const sortByDate = libUtil.groupBy(schedules, (schedule) => schedule.date.seconds)
-            .map(([date, items]) => ([...items]));
-        const sortByCategory = Array.from(sortByDate.values()).map((items: ScheduleState[]) => ({
-            plans: items.filter((item) => item.category === "plan"),
-            events: items.filter((item) => item.category === "event"),
-        } as ItemGroup));
-        // console.log(sortByDate);
-        // console.log(sortByCategory);
-        setGroup(sortByCategory);
-    }, [schedules]);
+        const plansByDate: plansSortByDate = {};
+        const eventsByDate: eventsSortByDate = {};
+
+        plans.forEach(plan => {
+            const date = dayjs(plan.date.toDate()).format("YYYY-MM-DD");
+            if (!plansByDate[date]) {
+                plansByDate[date] = [];
+            }
+            plansByDate[date].push(plan);
+        });
+
+        events.forEach(event => {
+            const date = dayjs(event.date.toDate()).format("YYYY-MM-DD");
+            if (!eventsByDate[date]) {
+                eventsByDate[date] = [];
+            }
+            eventsByDate[date].push(event);
+        });
+
+        // どちらも同じ日付のキーを持つようにする
+        const allDates = [...new Set([...Object.keys(plansByDate), ...Object.keys(eventsByDate)])];
+        allDates.forEach(date => {
+            plansByDate[date] = plansByDate[date] || [];
+            eventsByDate[date] = eventsByDate[date] || [];
+        });
+        const sortByDate = allDates.sort((a, b) => cvtDateStringToNumber(a) - cvtDateStringToNumber(b));
+        const itemGroup = sortByDate.map((date) => {
+            return {
+                // return [date, plansByDate[date], eventsByDate[date]];
+                plans: plansByDate[date],
+                events: eventsByDate[date],
+            };
+        });
+
+        // console.log(itemGroup);
+        setGroup(itemGroup);
+    }, [events, plans]);
 
     return (
         <>
@@ -69,7 +110,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
         return users.find((u) => u.id === userId)?.name;
     };
 
-    const isMine = (plan: ScheduleState) => {
+    const isMine = (plan: PlanDocumentWithId) => {
         return currentUser?.id === plan.userId;
     };
 
@@ -80,8 +121,12 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
             const d = plans[0].date.toDate();
             d.setHours(0, 0, 0, 0);
             setDate(d);
+        } else if (events.length > 0) {
+            const d = events[0].date.toDate();
+            d.setHours(0, 0, 0, 0);
+            setDate(d);
         }
-    }, [setDocumentIdOfCurrentUser, plans, currentUser]);
+    }, [setDocumentIdOfCurrentUser, plans, currentUser, events]);
 
     useEffect(() => {
         const diff = dayjs(date).diff(dayjs(), "day", true);
@@ -101,25 +146,26 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
         }
 
         if (documentIdOfCurrentUser) {
-            deleteSchedule(documentIdOfCurrentUser);
+            deleteSchedule(documentIdOfCurrentUser, ScheduleCategories.PLAN);
         } else {
             // console.log("document was not found");
             const newSchedule = {
                 title: "登校",
                 date: Timestamp.fromDate(date),
-                category: "plan",
                 userId: currentUser?.id,
-            } as ScheduleState;
-            addSchedule(newSchedule);
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now(),
+            } as PlanDocumentWithId;
+            addSchedule(newSchedule, ScheduleCategories.PLAN);
         }
         setEnabled(false);
     }, [currentUser?.id, date, documentIdOfCurrentUser, enabled]);
 
     return (
         <>
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
+            <Grid item xs={12} sm={6} lg={4} xl={3} className="items-stretch grid-flow-row">
                 <Stack direction="column" className="bg-white rounded-lg py-3 px-5 shadow shadow-gray-300 group hover:shadow-md transition">
-                    {plans.length > 0 && (
+                    {(plans.length > 0 || events.length > 0) && (
                         <Stack direction="row" className="flex justify-around">
                             {/* <Chip
                                 className="w-fit text-base px-1 relative -top-3 -left-0 py-4
@@ -146,6 +192,19 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                             <BasicPopover date={date} hasOwn={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
                         </Stack>
                     )}
+
+                    <Stack direction="column" className="">
+                        {events.map((event, index) => (
+                            <Box key={index} className="mb-2">
+                                <Typography
+                                    className={"rounded-md bg-indigo-200 px-3 py-1"}
+                                >
+                                    {event.title}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Stack>
+
                     <Stack direction={"row"} className="flex justify-end flex-row-reverse">
                         {plans.map((plan, index) => (
                             <Box key={index} className="-mr-3 mb-2">
