@@ -1,11 +1,12 @@
-import { Grid } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { grey } from "@mui/material/colors";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -14,19 +15,18 @@ import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-import { ScheduleState } from "@/lib/entity";
+import { EventDocumentWithId, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
 import { addSchedule } from "@/lib/firebase";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 import DateProvider from "./DateProvider";
 
-
-enum Categories {
-    plan = "plan",
-    event = "event"
+type PlanInputs = {
+    date: Dayjs;
 }
 
-type PlanInputs = {
+type EventInputs = {
+    title: string;
     date: Dayjs;
 }
 
@@ -51,29 +51,49 @@ const styles = {
 };
 
 export default function AddScheduleDialog({ open, handleClose }: Props) {
-    const [currentCategory, setCurrentCategory] = useState(Categories.plan);
+    const [currentCategory, setCurrentCategory] = useState(ScheduleCategories.PLAN);
     const { currentUser } = useDataBaseStore();
 
-    const { control: controlPlan, handleSubmit: handleSubmitPlan } = useForm<PlanInputs>({
+    const { control: planControl, handleSubmit: planHandleSubmit } = useForm<PlanInputs>({
         defaultValues: {
             date: dayjs(),
         },
     });
+    const { control: eventControl, handleSubmit: eventHandleSubmit } = useForm<EventInputs>({
+        defaultValues: {
+            date: dayjs(),
+            title: "",
+        },
+    });
 
-    const onSubmit: SubmitHandler<PlanInputs> = async (data) => {
+    const onSubmitPlan: SubmitHandler<PlanInputs> = async (data) => {
         const dateWithoutTime = data.date.toDate();
-        if (!dateWithoutTime) {
-            return;
-        }
-
         dateWithoutTime.setHours(0, 0, 0, 0);
+
         const newSchedule = {
             title: "登校",
             date: Timestamp.fromDate(dateWithoutTime),
-            category: currentCategory,
             userId: currentUser?.id,
-        } as ScheduleState;
-        addSchedule(newSchedule);
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+        } as PlanDocumentWithId;
+        addSchedule(newSchedule, currentCategory);
+        handleClose();
+        // todo: snackbar
+    };
+
+    const onSubmitEvent: SubmitHandler<EventInputs> = async (data) => {
+        const dateWithoutTime = data.date.toDate();
+        dateWithoutTime.setHours(0, 0, 0, 0);
+
+        const newSchedule = {
+            title: data.title,
+            date: Timestamp.fromDate(dateWithoutTime),
+            userId: currentUser?.id,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+        } as EventDocumentWithId;
+        addSchedule(newSchedule, currentCategory);
         handleClose();
         // todo: snackbar
     };
@@ -95,53 +115,86 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
                                     }
                                 }}
                             >
-                                <CustomToggleButton key={Categories.plan} value={Categories.plan} className="sm:text-lg rounded-l-full">
+                                <CustomToggleButton key={ScheduleCategories.PLAN} value={ScheduleCategories.PLAN} className="sm:text-lg rounded-l-full">
                                     登校予定
                                 </CustomToggleButton>
-                                <CustomToggleButton key={Categories.event} value={Categories.event} className="sm:text-lg rounded-r-full">
+                                <CustomToggleButton key={ScheduleCategories.EVENT} value={ScheduleCategories.EVENT} className="sm:text-lg rounded-r-full">
                                     イベント
                                 </CustomToggleButton>
                             </ToggleButtonGroup>
-                            {currentCategory === Categories.plan && (
+                            {currentCategory === ScheduleCategories.PLAN && (
                                 <>
-                                    <form onSubmit={handleSubmitPlan(onSubmit)}>
-                                        <Grid container className="mt-8 mx-auto grid-flow-col md:grid-flow-row">
-                                            <Grid item xs="auto" md className="mx-auto w-full md:max-w-sm md:mx-0">
-                                                <DateProvider>
-                                                    <Controller name="date" control={controlPlan} rules={{ required: { value: true, message: "Date is required" } }}
-                                                        render={({ field, fieldState }) => (
-                                                            <DatePicker {...field}
-                                                                label="日付"
-                                                                defaultValue={dayjs()}
-                                                                minDate={dayjs()}
-                                                                value={field.value || ""}
-                                                                onChange={field.onChange}
-                                                                format="YYYY年M月D日"
-                                                                views={["day"]}
-                                                                slotProps={{
-                                                                    toolbar: {
-                                                                        toolbarFormat: "YYYY年M月D日",
-                                                                    },
-                                                                    dialog: {
-                                                                        sx: styles.mobiledialogprops,
-                                                                    },
-                                                                }}
-                                                                className="w-full" />
-                                                        )}
-                                                    />
-                                                </DateProvider>
-                                            </Grid>
-                                            <Grid item xs="auto" className="ml-auto mt-4 md:mt-0 md:ml-4">
-                                                <Button type="submit" variant="contained" className="rounded-full px-8 w-full p-4 md:ml-4 md:h-full">登校する</Button>
-                                            </Grid>
-                                        </Grid>
+                                    <form onSubmit={planHandleSubmit(onSubmitPlan)}>
+                                        <Stack spacing={3} className="mt-10">
+                                            <DateProvider>
+                                                <Controller name="date" control={planControl} rules={{ required: { value: true, message: "Date is required" } }}
+                                                    render={({ field, fieldState }) => (
+                                                        <DatePicker {...field}
+                                                            label="日付"
+                                                            defaultValue={dayjs()}
+                                                            minDate={dayjs()}
+                                                            value={field.value || ""}
+                                                            onChange={field.onChange}
+                                                            format="YYYY年M月D日"
+                                                            views={["day"]}
+                                                            slotProps={{
+                                                                toolbar: {
+                                                                    toolbarFormat: "YYYY年M月D日",
+                                                                },
+                                                                dialog: {
+                                                                    sx: styles.mobiledialogprops,
+                                                                },
+                                                            }}
+                                                            className="w-full" />
+                                                    )}
+                                                />
+                                            </DateProvider>
+                                            <Button type="submit" variant="contained" className="rounded-full px-10 ml-auto py-4 md:text-base">登校する</Button>
+                                        </Stack>
                                     </form>
                                 </>
                             )}
-                            {currentCategory === Categories.event && (
-                                <Grid container className="mt-8 mx-auto grid-flow-col md:grid-flow-row w-full">
-                                    <Alert severity="info" className="w-full">今後実装予定</Alert>
-                                </Grid>
+                            {currentCategory === ScheduleCategories.EVENT && (
+                                <form onSubmit={eventHandleSubmit(onSubmitEvent)}>
+                                    <Stack spacing={3} className="mt-10">
+                                        <Alert severity="warning" className="">(2023/10/04) 追加後、アプリから削除・変更ができないため、登録するときは注意すること</Alert>
+
+                                        <DateProvider>
+                                            <Controller name="title" control={eventControl} rules={{ required: { value: true, message: "Title is required" } }}
+                                                render={({ field, fieldState }) => (
+                                                    <TextField {...field}
+                                                        label="タイトル"
+                                                        defaultValue={""}
+                                                        value={field.value || ""}
+                                                        onChange={field.onChange}
+                                                        className="w-full" />
+                                                )}
+                                            />
+                                            <Controller name="date" control={eventControl} rules={{ required: { value: true, message: "Date is required" } }}
+                                                render={({ field, fieldState }) => (
+                                                    <DatePicker {...field}
+                                                        label="日付"
+                                                        defaultValue={dayjs()}
+                                                        minDate={dayjs()}
+                                                        value={field.value || ""}
+                                                        onChange={field.onChange}
+                                                        format="YYYY年M月D日"
+                                                        views={["day"]}
+                                                        slotProps={{
+                                                            toolbar: {
+                                                                toolbarFormat: "YYYY年M月D日",
+                                                            },
+                                                            dialog: {
+                                                                sx: styles.mobiledialogprops,
+                                                            },
+                                                        }}
+                                                        className="w-full" />
+                                                )}
+                                            />
+                                        </DateProvider>
+                                        <Button type="submit" variant="contained" className="rounded-full px-10 ml-auto py-4 md:text-base">登録する</Button>
+                                    </Stack>
+                                </form>
                             )}
                         </DialogContent>
                     </Dialog>
