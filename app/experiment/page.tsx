@@ -1,6 +1,5 @@
 "use client";
 
-import { Box } from "@mui/material";
 import { redirect } from "next/navigation";
 
 import PageLoading from "@/components/PageLoading";

@@ -35,24 +35,15 @@ const DayCheckbox = ({ }: Props) => {
         console.log(`submit: ${data.checks.join(", ")}}`);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            console.log("clicked");
-        }
-    };
-
     return (
         <>
             <Stack component="form" noValidate onSubmit={handleSubmit(onSubmit)} spacing={2} sx={{ m: 2, width: "25ch" }}>
-
-                {/* <FormControlLabel fullWidth error={errors.checkerr !== undefined}> */}
                 <FormControl fullWidth>
                     Form Title
                     <FormGroup>
                         <Controller
                             name={`checks.${0}`}
                             control={control}
-                            // rules={validationRules.checks}
                             render={({ field }) => (
                                 <FormControlLabel
                                     className="rounded-md shadow-sm px-3 pt-2 pb-1 w-fit border border-gray-800"

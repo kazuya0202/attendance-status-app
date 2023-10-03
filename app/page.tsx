@@ -12,7 +12,6 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 export default function Home() {
-    const { users, currentUser } = useDataBaseStore();
     const { user } = useAuthContext();
 
     if (user === undefined) {
@@ -24,7 +23,7 @@ export default function Home() {
     return (
         <>
             <Box className="mx-5 sm:my-5">
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction={"row"}>
                     <Grid item xs={"auto"} className="hidden md:block">
                         <DataCalendarComponent />
                     </Grid>
