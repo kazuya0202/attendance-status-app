@@ -11,7 +11,7 @@
 - Tailwindcss
 - Firebase
    - Firestore
-   - FIrebase Authentication
+   - Firebase Authentication
 - Zustand
 
 # ローカル環境のセットアップ
