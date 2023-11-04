@@ -3,7 +3,7 @@
 # プロジェクトについて
 
 - パッケージマネージャー：`yarn`
-- 仮想環境             :'docker'
+- 仮想環境             :`docker`
 
 ## 技術スタック
 
@@ -65,7 +65,7 @@ yarn dev
 
 ---
 
-##Dockerによる起動
+## Dockerによる起動
 
 - ターミナルでコマンドを実行
 
@@ -76,6 +76,7 @@ docker-compose build
 ```other
 docker-compose up -d
 ```
+---
 
 
 ※ ここから下はFirebaseにデプロイするタイミングで必要になります。localhostで開発をするだけの場合は、行う必要はないです。
