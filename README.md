@@ -3,6 +3,7 @@
 # プロジェクトについて
 
 - パッケージマネージャー：`yarn`
+- 仮想環境             :'docker'
 
 ## 技術スタック
 
@@ -13,6 +14,7 @@
    - Firestore
    - Firebase Authentication
 - Zustand
+- Docker
 
 # ローカル環境のセットアップ
 
@@ -39,6 +41,10 @@ NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=**********
 ...
 ```
 
+##
+
+
+
 ## モジュールのインストール
 
 - ターミナルでコマンドを実行
@@ -58,6 +64,19 @@ yarn dev
 - 起動後、http://localhost:3000 にアクセスする
 
 ---
+
+##Dockerによる起動
+
+- ターミナルでコマンドを実行
+
+```other
+docker-compose build
+```
+
+```other
+docker-compose up -d
+```
+
 
 ※ ここから下はFirebaseにデプロイするタイミングで必要になります。localhostで開発をするだけの場合は、行う必要はないです。
 
