@@ -45,10 +45,6 @@ NEXT_PUBLIC_FIREBASE_APP_ID =
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 
-##
-
----
-
 ## Dockerによる起動方法
 
 - ターミナルでコマンドを実行
@@ -80,12 +76,13 @@ yarn
 yarn dev
 ```
 
-- 起動後、http://localhost:3000 にアクセスする
-
 ---
+
+- 起動後、http://localhost:3000 にアクセスする
 
 
 ※ ここから下はFirebaseにデプロイするタイミングで必要になります。localhostで開発をするだけの場合は、行う必要はないです。
+
 
 ## Firebaseローカル
 
