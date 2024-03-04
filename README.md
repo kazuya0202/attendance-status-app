@@ -62,8 +62,9 @@ docker-compose up -d
 ```
 ---
 
-##Dockerを使わない起動方法
-# モジュールのインストール
+## Dockerを使わない起動方法
+
+### モジュールのインストール
 
 - ターミナルでコマンドを実行
 
@@ -71,7 +72,7 @@ docker-compose up -d
 yarn
 ```
 
-# 開発モードの実行
+### 開発モードの実行
 
 - ターミナルでコマンドを実行
 
@@ -81,19 +82,6 @@ yarn dev
 
 - 起動後、http://localhost:3000 にアクセスする
 
----
-
-## Dockerによる起動
-
-- ターミナルでコマンドを実行
-
-```other
-docker-compose build
-```
-
-```other
-docker-compose up -d
-```
 ---
 
 
