@@ -1,6 +1,6 @@
 "use client";
 
-import { collection, onSnapshot, query, Timestamp, where } from "firebase/firestore";
+import { collection, onSnapshot, query, Timestamp, where ,doc,getDoc} from "firebase/firestore";
 import { createContext, useContext, useEffect } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 
@@ -62,6 +62,7 @@ export const DataBaseProvider = ({ children }: Props) => {
         const state = store.getState();
         initializeFirebaseApp();
 
+       
         const unSubscribeUsers = onSnapshot(collection(db, "users"), (snapshot) => {
             state.setUsers(
                 snapshot.docs.map((doc) => (

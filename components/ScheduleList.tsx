@@ -85,7 +85,7 @@ export default function ScheduleList() {
                 <Stack direction="row" className="mb-2 ml-2">
                     <EventIcon className="my-auto" />
                     <Typography variant="h6" className="ml-2 my-auto">
-                        今後の予定
+                        今後の予定debug
                     </Typography>
                 </Stack>
                 <Grid container spacing={2}>
@@ -149,6 +149,10 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
             deleteSchedule(documentIdOfCurrentUser, ScheduleCategories.PLAN);
         } else {
             // console.log("document was not found");
+            //TODO スケジュール追加
+            console.log(currentUser?.id);
+            console.log(currentUser);
+            
             const newSchedule = {
                 title: "登校",
                 date: Timestamp.fromDate(date),

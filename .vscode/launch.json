@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+          "type": "pwa-chrome",
+          "request": "launch", 
+          "name": "Next.js: client-side", 
+          "url": "http://localhost:3000", 
+          "webRoot": "${workspaceFolder}",
+          "sourceMapPathOverrides": {
+            "webpack://_N_E/*": "${workspaceFolder}/*"
+          }
+        },
+        {
+          "type": "node", 
+          "request": "attach", 
+          "name": "Next.js: server-side",
+          "port": 9229, 
+          "address": "localhost", 
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/attendance-status-app",
+        },
+      ],
+      "compounds": [
+        {
+          "name": "Next.js: debug",
+          "configurations": [
+            "Next.js: client-side",
+            "Next.js: server-side"
+          ]
+        }
+      ]
+}

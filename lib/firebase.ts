@@ -34,6 +34,8 @@ export const addSchedule = async (
   newSchedule: PlanDocumentWithId | EventDocumentWithId,
   cat: ScheduleCategories
 ) => {
+  
+  console.log("debug");
   // const runtimeTimestamp = Timestamp.now();
   const docRef = await addDoc(
     collectionRef[cat],

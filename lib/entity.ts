@@ -1,5 +1,6 @@
 import { FirestoreDataConverter, Timestamp } from "firebase/firestore";
 
+//引数TのプロパティとTimestampプロパティを持つ型エイリアス
 type WithTimestamp<T> = T & {
     createdAt?: Timestamp;
     updatedAt?: Timestamp;

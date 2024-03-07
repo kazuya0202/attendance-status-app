@@ -44,11 +44,11 @@ export default function Login() {
         signInWithEmailAndPassword(auth, data.email, data.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                // * for check behavior
-                // const x = users.find((u) => u.id === user.uid);
-                // console.log(x);
-                // setCurrentUser(x);
-                setCurrentUser(users.find((u) => u.id === user.uid));
+                //* for check behavior
+                const x = users.find((u) => u.id === user.uid);
+                console.log(x);
+                setCurrentUser(x);
+                //setCurrentUser(users.find((u) => u.id === user.uid));
                 // console.log(user);
                 router.push("/");
                 setSnackbarController({ severity: "success", message: "ログインに成功しました", open: true });
