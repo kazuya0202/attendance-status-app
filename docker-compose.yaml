@@ -1,9 +1,17 @@
 version: '3'
+volumes:
+  nestjs-node-modules:
+   
 services:
   attendance_app:
     build: .
-    container_name: app
     restart: always
+    #added for hot reloading
+    volumes:
+      - .:/app
+      - nestjs-node-modules:/app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
     ports:
       - 3000:3000
       

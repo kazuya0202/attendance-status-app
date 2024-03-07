@@ -1,5 +1,5 @@
 FROM node:20
-WORKDIR /attendance-status-app
+WORKDIR /app
 COPY package.json yarn.lock .
 RUN yarn
 COPY . .
