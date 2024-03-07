@@ -47,7 +47,7 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
 ## Dockerによる起動方法
 
-- ターミナルでコマンドを実行
+- DockerDesktop起動後ターミナルでコマンドを実行
 
 ```other
 docker-compose build
@@ -56,6 +56,9 @@ docker-compose build
 ```other
 docker-compose up -d
 ```
+
+- VScodeで”Next.js:debug”によるデバックを実行
+
 ---
 
 ## Dockerを使わない起動方法
@@ -75,10 +78,9 @@ yarn
 ```shell
 yarn dev
 ```
+- 起動後、http://localhost:3000 にアクセスする
 
 ---
-
-- 起動後、http://localhost:3000 にアクセスする
 
 
 ※ ここから下はFirebaseにデプロイするタイミングで必要になります。localhostで開発をするだけの場合は、行う必要はないです。
