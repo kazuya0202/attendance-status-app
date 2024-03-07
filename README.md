@@ -47,7 +47,7 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
 ## Dockerによる起動方法
 
-- ターミナルでコマンドを実行
+- DockerDesktop起動後ターミナルでコマンドを実行
 
 ```other
 docker-compose build
@@ -56,6 +56,9 @@ docker-compose build
 ```other
 docker-compose up -d
 ```
+
+- VScodeで”Next.js:debug”によるデバックを実行
+
 ---
 
 ## Dockerを使わない起動方法
@@ -75,10 +78,9 @@ yarn
 ```shell
 yarn dev
 ```
+- 起動後、http://localhost:3000 にアクセスする
 
 ---
-
-- 起動後、http://localhost:3000 にアクセスする
 
 
 ※ ここから下はFirebaseにデプロイするタイミングで必要になります。localhostで開発をするだけの場合は、行う必要はないです。
@@ -111,3 +113,14 @@ yarn deploy
 ```
 
 - ホスティング先：Firebase Hosting
+
+
+# 開発予定機能
+
+- [ ] イベント削除機能
+   - [ ] 登校削除とイベント削除の分離
+- [ ] 登校多重追加バグの修正
+- [ ] イベント詳細確認機能機能
+   - [ ] アサイン（メンション？）機能
+- [ ] イベント，登校のGoogleカレンダーへの追加機能
+- [ ] ヘルプの追加
