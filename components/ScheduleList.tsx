@@ -3,10 +3,11 @@ import { Avatar, Box, Typography } from "@mui/material";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { Timestamp } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 
 import { formatDateSimply } from "@/lib/dayjsUtility/util";
 import { EventDocumentWithId, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
@@ -114,6 +115,11 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
         return currentUser?.id === plan.userId;
     };
 
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        //setAnchorEl(event.currentTarget);
+        console.log("Button Clicked");
+    };
+
     useEffect(() => {
         const doc = plans.find((p) => p.userId === currentUser?.id);
         setDocumentIdOfCurrentUser(doc?.id);
@@ -197,15 +203,20 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                         </Stack>
                     )}
 
+                    {/*TODO 登録したEventのUI表示*/}
                     <Stack direction="column" className="">
                         {events.map((event, index) => (
-                            <Box key={index} className="mb-2">
-                                <Typography
-                                    className={"rounded-md bg-indigo-200 px-3 py-1"}
-                                >
-                                    {event.title}
-                                </Typography>
-                            </Box>
+                            <Button
+                            onClick={handleClick}
+                            >
+                                <Box key={index} className="mb-2">
+                                    <Typography
+                                        className={"rounded-md bg-indigo-200 px-3 py-1"}
+                                    >
+                                        {event.title}
+                                    </Typography>
+                                </Box>
+                            </Button>
                         ))}
                     </Stack>
 
