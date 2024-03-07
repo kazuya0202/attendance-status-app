@@ -206,13 +206,23 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                     {/*TODO 登録したEventのUI表示*/}
                     <Stack direction="column" className="">
                         {events.map((event, index) => (
+                            // <Box key={index} className="mb-2">
+                            //     <Typography
+                            //         className={"rounded-md bg-indigo-200 px-3 py-1"}
+                            //     >
+                            //         {event.title}
+                            //     </Typography>
+                            // </Box>
                             <Button
                             onClick={handleClick}
+                            className={"rounded-md bg-indigo-200 mb-2"}
                             >
-                                <Box key={index} className="mb-2">
+                                {/*mb-2はTailwind*/}
+                                <Box key={index}
+                                 className={"mr-auto"}>
                                     <Typography
-                                        className={"rounded-md bg-indigo-200 px-3 py-1"}
-                                    >
+                                    className={"text-black"}>
+                                
                                         {event.title}
                                     </Typography>
                                 </Box>
