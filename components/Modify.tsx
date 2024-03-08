@@ -86,7 +86,23 @@ export default function BasicPopover({ date, eventTitle, isCancel, onButtonClick
                     >
                         {eventTitle}
                     </Typography>
-                </Box>)
+                </Box>
+                //以下ボタンコンポーネントでの実装
+                // <Button
+                    // onClick={handleClick}
+                    // className={"rounded-md bg-indigo-200 mb-2"}
+                    // >
+                    //     {/*mb-2はTailwind*/}
+                    //     <Box key={index}
+                    //      className={"mr-auto"}>
+                    //         <Typography
+                    //         className={"text-black"}>
+                        
+                    //             {event.title}
+                    //         </Typography>
+                    //     </Box>
+                // </Button>
+                )
             }
 
             <Popover

@@ -103,8 +103,10 @@ export default function ScheduleList() {
 const ScheduleItem = ({ plans, events }: ItemGroup) => {
     const { users, currentUser } = useDataBaseStore();
     const [documentIdOfCurrentUser, setDocumentIdOfCurrentUser] = useState<string | undefined>(undefined);
+    const [atdChanged, setAtdChanged] = useState(false);
 
-    const [enabled, setEnabled] = useState(false);
+    const [deletedEventId, setDeletedEventId] = useState<string | undefined>(undefined);
+    
     const [date, setDate] = useState<Date>(new Date());
     const [relativeDate, setRelativeDate] = useState<"today" | "tomorrow" | null>(null);
     const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
@@ -119,7 +121,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
-        console.log("Button Clicked");
+        //console.log("Button Clicked");
     };
 
     useEffect(() => {
@@ -149,7 +151,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
     }, [date]);
 
     useEffect(() => {
-        if (!enabled) {
+        if (!atdChanged) {
             return;
         }
 
@@ -170,8 +172,19 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
             } as PlanDocumentWithId;
             addSchedule(newSchedule, ScheduleCategories.PLAN);
         }
-        setEnabled(false);
-    }, [currentUser?.id, date, documentIdOfCurrentUser, enabled]);
+        setAtdChanged(false);
+    }, [currentUser?.id, date, documentIdOfCurrentUser, atdChanged]);
+    
+    useEffect(() => {
+        if (deletedEventId===undefined){
+            return;
+        } else {
+            deleteSchedule(deletedEventId, ScheduleCategories.EVENT);
+            //console.log(`DeletedEvent:${deletedEventId}`)
+        }
+        setDeletedEventId(undefined);
+
+    }, [deletedEventId]);
 
     return (
         <>
@@ -201,35 +214,14 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                                 </Typography>
                             </Box>
 
-                            <BasicPopover date={date} eventTitle={undefined} isCancel={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
+                            <BasicPopover date={date} eventTitle={undefined} isCancel={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setAtdChanged(true)} />
                         </Stack>
                     )}
 
                     {/*TODO 登録したEventのUI表示*/}
                     <Stack direction="column" className="">
                         {events.map((event, index) => (
-                            // <Box key={index} className="mb-2">
-                            //     <Typography
-                            //         className={"rounded-md bg-indigo-200 px-3 py-1"}
-                            //     >
-                            //         {event.title}
-                            //     </Typography>
-                            // </Box>
-                            // <Button
-                            // onClick={handleClick}
-                            // className={"rounded-md bg-indigo-200 mb-2"}
-                            // >
-                            //     {/*mb-2はTailwind*/}
-                            //     <Box key={index}
-                            //      className={"mr-auto"}>
-                            //         <Typography
-                            //         className={"text-black"}>
-                                
-                            //             {event.title}
-                            //         </Typography>
-                            //     </Box>
-                            // </Button>
-                            <BasicPopover date={date} eventTitle={event.title} isCancel={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
+                            <BasicPopover date={date} eventTitle={event.title} isCancel={true} onButtonClick={() => setDeletedEventId(event.id)} />
                         ))}
                     </Stack>
 
