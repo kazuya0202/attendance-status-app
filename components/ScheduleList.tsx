@@ -16,6 +16,7 @@ import * as libUtil from "@/lib/util";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 import BasicPopover from "./Modify";
+import EventDetailDialog from "./EventDetailDialog";
 
 type ItemGroup = {
     plans: PlanDocumentWithId[];
@@ -106,6 +107,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
     const [enabled, setEnabled] = useState(false);
     const [date, setDate] = useState<Date>(new Date());
     const [relativeDate, setRelativeDate] = useState<"today" | "tomorrow" | null>(null);
+    const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
 
     const getUsername = (userId: string) => {
         return users.find((u) => u.id === userId)?.name;
@@ -116,7 +118,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
     };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        //setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget);
         console.log("Button Clicked");
     };
 
@@ -199,7 +201,7 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                                 </Typography>
                             </Box>
 
-                            <BasicPopover date={date} hasOwn={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
+                            <BasicPopover date={date} eventTitle={undefined} isCancel={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
                         </Stack>
                     )}
 
@@ -213,20 +215,21 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
                             //         {event.title}
                             //     </Typography>
                             // </Box>
-                            <Button
-                            onClick={handleClick}
-                            className={"rounded-md bg-indigo-200 mb-2"}
-                            >
-                                {/*mb-2はTailwind*/}
-                                <Box key={index}
-                                 className={"mr-auto"}>
-                                    <Typography
-                                    className={"text-black"}>
+                            // <Button
+                            // onClick={handleClick}
+                            // className={"rounded-md bg-indigo-200 mb-2"}
+                            // >
+                            //     {/*mb-2はTailwind*/}
+                            //     <Box key={index}
+                            //      className={"mr-auto"}>
+                            //         <Typography
+                            //         className={"text-black"}>
                                 
-                                        {event.title}
-                                    </Typography>
-                                </Box>
-                            </Button>
+                            //             {event.title}
+                            //         </Typography>
+                            //     </Box>
+                            // </Button>
+                            <BasicPopover date={date} eventTitle={event.title} isCancel={Boolean(documentIdOfCurrentUser)} onButtonClick={() => setEnabled(true)} />
                         ))}
                     </Stack>
 

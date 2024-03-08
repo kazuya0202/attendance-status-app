@@ -1,5 +1,5 @@
 import EditIcon from "@mui/icons-material/Edit";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, Box, Typograqhy } from "@mui/material";
 import Button from "@mui/material/Button";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
@@ -12,11 +12,15 @@ import { formatDate } from "@/lib/dayjsUtility/util";
 
 type Props = {
     date: Date;
-    hasOwn: boolean;
+    eventTitle: string | undefined;
+    isCancel: boolean;
     onButtonClick: () => void;
 }
 
-export default function BasicPopover({ date, hasOwn, onButtonClick }: Props) {
+export default function BasicPopover({ date, eventTitle, isCancel, onButtonClick }: Props) {
+    const atdText="登校予約"
+    const eventText=`イベント：\"${eventTitle}\"`
+    
     const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -29,8 +33,12 @@ export default function BasicPopover({ date, hasOwn, onButtonClick }: Props) {
 
     const getElement = () => {
         const fmtDate = formatDate(dayjs(date));
-        const content = hasOwn ? `${fmtDate}の予定を取り消しますか？` : `${fmtDate}に予定を登録しますか？`;
-        const btnLabel = hasOwn ? "取り消す" : "登録する";
+        const content = 
+            isCancel ? `${fmtDate}の${eventTitle === undefined ? atdText : eventText}を取り消しますか？` 
+            : `${fmtDate}に${eventTitle === undefined ? atdText : eventText}を登録しますか？`;
+
+        const btnLabel = isCancel ? "取り消す" : "登録する";
+
         return (
             <>
                 <Stack flexDirection={"column"} alignContent={"end"} spacing={1} className="m-5">
@@ -39,10 +47,10 @@ export default function BasicPopover({ date, hasOwn, onButtonClick }: Props) {
                     </Typography>
                     <Button
                         onClick={() => { onButtonClick(); handleClose(); }}
-                        variant={hasOwn && "outlined" || "contained"}
+                        variant={isCancel && "outlined" || "contained"}
                         className={
                             clsx(
-                                hasOwn && "border-red-500 text-red-500",
+                                isCancel && "border-red-500 text-red-500",
                                 "rounded-full px-4 ml-auto"
                             )}
                     >
@@ -58,15 +66,28 @@ export default function BasicPopover({ date, hasOwn, onButtonClick }: Props) {
 
     return (
         <>
-            <IconButton
-                aria-describedby={id}
-                color="inherit"
-                onClick={handleClick}
-                className="rounded-full mt-0 ml-auto w-fit h-auto text-gray-500 opacity-50 md:opacity-0 group-hover:opacity-50 transition"
-                size="small">
-                {/* <BorderColorIcon /> */}
-                <EditIcon />
-            </IconButton>
+            {eventTitle === undefined ?
+                (<IconButton
+                    aria-describedby={id}
+                    color="inherit"
+                    onClick={handleClick}
+                    className="rounded-full mt-0 ml-auto w-fit h-auto text-gray-500 opacity-50 md:opacity-0 group-hover:opacity-50 transition"
+                    size="small">
+                    {/* <BorderColorIcon /> */}
+                    <EditIcon />
+                </IconButton>)
+                :
+                (<Box 
+                    key={eventTitle}
+                    className="mb-2"
+                    onClick={handleClick}>
+                    <Typography
+                        className={"rounded-md bg-indigo-200 px-3 py-1"}
+                    >
+                        {eventTitle}
+                    </Typography>
+                </Box>)
+            }
 
             <Popover
                 id={id}
