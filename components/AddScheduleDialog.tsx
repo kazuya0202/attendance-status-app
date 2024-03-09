@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 import { EventDocumentWithId, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
-import { addSchedule } from "@/lib/firebase";
+import { addSchedule, getScheduleCount } from "@/lib/firebase";
 import { useDataBaseStore } from "@/store/DataBaseProvider";
 
 import DateProvider from "./DateProvider";
@@ -66,6 +66,7 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
         },
     });
 
+    //TODO スケジュール追加
     const onSubmitPlan: SubmitHandler<PlanInputs> = async (data) => {
         const dateWithoutTime = data.date.toDate();
         dateWithoutTime.setHours(0, 0, 0, 0);
@@ -77,7 +78,12 @@ export default function AddScheduleDialog({ open, handleClose }: Props) {
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         } as PlanDocumentWithId;
-        addSchedule(newSchedule, currentCategory);
+        
+        getScheduleCount(newSchedule.date,"date",currentCategory).then((result) => {
+            if(result===0){
+                addSchedule(newSchedule, currentCategory);
+            }
+        });
         handleClose();
         // todo: snackbar
     };

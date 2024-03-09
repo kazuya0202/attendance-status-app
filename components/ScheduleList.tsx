@@ -159,7 +159,6 @@ const ScheduleItem = ({ plans, events }: ItemGroup) => {
             deleteSchedule(documentIdOfCurrentUser, ScheduleCategories.PLAN);
         } else {
             // console.log("document was not found");
-            //TODO スケジュール追加
             console.log(currentUser?.id);
             console.log(currentUser);
             

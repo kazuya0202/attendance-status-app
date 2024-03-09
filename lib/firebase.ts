@@ -2,7 +2,7 @@
 
 import dayjs from "dayjs";
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, doc, getFirestore, Timestamp, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getFirestore, Timestamp, updateDoc, query, where, getCountFromServer } from "firebase/firestore";
 
 import { formatDate } from "@/lib/dayjsUtility/util";
 import { EventDocumentConverter, EventDocumentWithId, PlanDocumentConverter, PlanDocumentWithId, ScheduleCategories } from "@/lib/entity";
@@ -29,6 +29,21 @@ export const collectionRef = {
   [ScheduleCategories.PLAN]: collection(db, "plans"),
   [ScheduleCategories.EVENT]: collection(db, "events"),
 };
+
+export const getScheduleCount = async (
+  target : any,
+  targetText : string,
+  cat: ScheduleCategories
+) => {
+  const q = query(collectionRef[cat], where(targetText, "==", target));
+  const snapshot = await getCountFromServer(q);
+  // querySnapshot.forEach((doc) => {
+  //   // doc.data() is never undefined for query doc snapshots
+  //   console.log("Get:", doc.id, " => ", doc.data());
+  // });
+  return snapshot.data().count;
+};
+
 
 export const addSchedule = async (
   newSchedule: PlanDocumentWithId | EventDocumentWithId,
