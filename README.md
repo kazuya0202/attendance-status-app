@@ -1,4 +1,4 @@
-# [Attendance Status App] README
+# Attendance Status App
 
 # プロジェクトについて
 
@@ -108,3 +108,10 @@ yarn deploy
 ```
 
 - ホスティング先：Firebase Hosting
+
+
+# イメージ画面
+
+![イメージ1](https://github.com/kazuya0202/attendance-status-app/assets/36531857/256bc015-4390-4a0e-afb9-4832c20a08b3)
+
+![イメージ2](https://github.com/kazuya0202/attendance-status-app/assets/36531857/0c98cf16-bac5-43a7-b721-a4a1aed8db2d)
